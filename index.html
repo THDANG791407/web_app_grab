@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ghi lịch làm việc</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #cbddf0;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Ghi lại lịch làm việc</h2>
+  <form id="work-form">
+    <label>Ngày giờ bắt đầu:
+      <input type="datetime-local" name="startTime" required>
+    </label>
+
+    <label>Số cuốc food:
+      <input type="number" name="food" min="0" required>
+    </label>
+
+    <label>Số cuốc bike:
+      <input type="number" name="bike" min="0" required>
+    </label>
+
+    <label>Số cuốc giao hàng:
+      <input type="number" name="delivery" min="0" required>
+    </label>
+
+    <label>Thu nhập (VND):
+      <input type="number" name="income" required>
+    </label>
+
+    <label>Tip (VND):
+      <input type="number" name="tip" required>
+    </label>
+
+    <button type="submit">Gửi dữ liệu</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const form = document.getElementById("work-form");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const endpoint = "https://script.google.com/macros/s/AKfycbxgzlhQqZLtRS-sn514o0TKnq7nQgE_zVFY618Wj6-jKTpRrKOMJGqHNhErVZlHqzhK/exec"; // <-- Dán URL Google Script vào đây
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.ok) {
+          status.textContent = "✅ Gửi dữ liệu thành công!";
+          status.style.color = "green";
+          form.reset();
+        } else {
+          status.textContent = "❌ Lỗi gửi dữ liệu.";
+          status.style.color = "red";
+        }
+      } catch (err) {
+        status.textContent = "⚠️ Lỗi mạng hoặc script.";
+        status.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
